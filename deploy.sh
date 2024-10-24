@@ -34,8 +34,13 @@ ssh -i $PEM_FILE ubuntu@$SERVER_IP << EOF
     # Navigate to project directory
     cd ~/synthenic
 
-    # Build and start containers
+    # Stop and remove existing containers
     sudo docker-compose down
+
+    # Remove old images to ensure we get the latest version
+    sudo docker system prune -f
+
+    # Build and start containers with sudo for port 80
     sudo docker-compose build --no-cache
     sudo docker-compose up -d
 
