@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SynthetiQ Support</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/support.css') }}">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">
+                <a href="{{ url_for('main.index') }}">SynthetiQ</a>
+            </div>
+            <div class="nav-links">
+                <a href="{{ url_for('main.dashboard') }}" class="nav-link"><i class="fas fa-chart-line"></i> Dashboard</a>
+                <a href="{{ url_for('auth.logout') }}" class="btn-logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container">
+        <section class="support-header">
+            <h1>Support Center</h1>
+            <p>Find answers to common questions and get help with SynthetiQ</p>
+        </section>
+
+        <section class="faq-section">
+            <h2>Frequently Asked Questions</h2>
+            <div class="faq-grid">
+                <div class="faq-item">
+                    <h3>What is synthetic data generation?</h3>
+                    <p>Synthetic data generation is the process of creating artificial data that maintains the statistical properties and patterns of real data while ensuring privacy and confidentiality.</p>
+                </div>
+                <div class="faq-item">
+                    <h3>Which models are available?</h3>
+                    <p>We currently support three main models: Gaussian Copula, CTGAN (Conditional Tabular GAN), and TVAE (Tabular Variational Autoencoder).</p>
+                </div>
+                <div class="faq-item">
+                    <h3>How secure is my data?</h3>
+                    <p>Your data is encrypted during transmission and storage. We never share your original data, and all processing is done securely on our servers.</p>
+                </div>
+                <div class="faq-item">
+                    <h3>What file formats are supported?</h3>
+                    <p>Currently, we support CSV files. Make sure your data is properly formatted with headers and consistent data types.</p>
+                </div>
+                <div class="faq-item">
+                    <h3>How many samples can I generate?</h3>
+                    <p>You can generate up to 10,000 samples per project. For larger datasets, please contact our support team.</p>
+                </div>
+                <div class="faq-item">
+                    <h3>How accurate is the synthetic data?</h3>
+                    <p>Our models maintain statistical relationships and patterns from the original data while ensuring privacy. The accuracy depends on the chosen model and data characteristics.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="contact-section">
+            <h2>Need More Help?</h2>
+            <p>Contact our support team for personalized assistance.</p>
+            <div class="contact-options">
+                <a href="mailto:support@synthetiq.com" class="contact-card">
+                    <i class="fas fa-envelope"></i>
+                    <h3>Email Support</h3>
+                    <p>support@synthetiq.com</p>
+                </a>
+                <div class="contact-card">
+                    <i class="fas fa-clock"></i>
+                    <h3>Response Time</h3>
+                    <p>Within 24 hours</p>
+                </div>
+            </div>
+        </section>
+    </main>
+</body>
+</html>

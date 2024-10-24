@@ -1,0 +1,512 @@
+/* Existing styles */
+/* Reset and base styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background-color: #f8f9fa;
+}
+
+a {
+    text-decoration: none;
+    color: #333;
+}
+
+ul {
+    list-style: none;
+}
+
+/* Header styles */
+header {
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    width: 100%;
+    z-index: 1000;
+}
+
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 5%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #4CAF50;
+}
+
+nav ul {
+    display: flex;
+    align-items: center;
+}
+
+nav ul li {
+    margin-left: 2rem;
+}
+
+nav ul li a:hover {
+    color: #4CAF50;
+}
+
+.cta-button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    border-radius: 5px;
+}
+
+.cta-button:hover {
+    background-color: #45a049;
+}
+
+/* Main content styles */
+main {
+    padding-top: 80px;
+}
+
+section {
+    padding: 4rem 5%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+h1, h2 {
+    margin-bottom: 1rem;
+}
+
+/* Jumbotron styles */
+#jumbotron {
+    background-color: #2c3e50;
+    color: #fff;
+    padding: 4rem 5%;
+    text-align: center;
+}
+
+#jumbotron h1 {
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+}
+
+.jumbotron-content {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.video-container {
+    position: relative;
+    padding-bottom: 56.25%; /* 16:9 aspect ratio */
+    height: 0;
+    overflow: hidden;
+}
+
+.video-container iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+/* Hero section */
+#hero {
+    background-color: #e9ecef;
+    padding: 4rem 5%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.hero-content {
+    flex: 1;
+    padding-right: 2rem;
+}
+
+#hero h2 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: #2c3e50;
+}
+
+#hero p {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+    color: #34495e;
+}
+
+.hero-image {
+    flex: 1;
+}
+
+.hero-image img {
+    max-width: 100%;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Features section */
+#features {
+    background-color: #fff;
+}
+
+.feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+}
+
+.feature-item {
+    text-align: center;
+    padding: 2rem;
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.feature-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.feature-item i {
+    font-size: 3rem;
+    color: #4CAF50;
+    margin-bottom: 1rem;
+}
+
+/* How it works section */
+#how-it-works {
+    background-color: #e9ecef;
+}
+
+.steps {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.step {
+    flex-basis: calc(25% - 1rem);
+    text-align: center;
+    margin-bottom: 2rem;
+    background-color: #fff;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.step-number {
+    background-color: #4CAF50;
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto 1rem;
+    font-weight: bold;
+}
+
+/* Pricing section */
+#pricing {
+    background-color: #e9ecef;
+}
+
+.pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+}
+
+.pricing-item {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    padding: 2rem;
+    text-align: center;
+    border-radius: 10px;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.pricing-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.pricing-item.featured {
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    transform: scale(1.05);
+    border: 2px solid #4CAF50;
+}
+
+.price {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin: 1rem 0;
+    color: #4CAF50;
+}
+
+.pricing-item ul {
+    margin-bottom: 1rem;
+    text-align: left;
+    padding-left: 1rem;
+}
+
+.pricing-item li {
+    margin-bottom: 0.5rem;
+}
+
+.pricing-item li::before {
+    content: "✓";
+    color: #4CAF50;
+    margin-right: 0.5rem;
+}
+
+/* Contact section */
+#contact {
+    background-color: #fff;
+}
+
+#contact-form {
+    display: grid;
+    gap: 1rem;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+#contact-form input,
+#contact-form textarea {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+#contact-form textarea {
+    height: 150px;
+}
+
+/* Footer styles */
+footer {
+    background-color: #2c3e50;
+    color: #fff;
+    padding: 3rem 5%;
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.footer-section {
+    flex-basis: calc(33.333% - 2rem);
+    margin-bottom: 2rem;
+}
+
+.footer-section h3 {
+    margin-bottom: 1rem;
+    color: #4CAF50;
+}
+
+.footer-section ul li {
+    margin-bottom: 0.5rem;
+}
+
+.footer-section a {
+    color: #fff;
+    transition: color 0.3s;
+}
+
+.footer-section a:hover {
+    color: #4CAF50;
+}
+
+.social-icons a {
+    color: #fff;
+    font-size: 1.5rem;
+    margin-right: 1rem;
+    transition: color 0.3s;
+}
+
+.social-icons a:hover {
+    color: #4CAF50;
+}
+
+.footer-bottom {
+    text-align: center;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid #34495e;
+}
+
+/* Modal styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1001;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+    background-color: #fff;
+    margin: 15% auto;
+    padding: 2rem;
+    border-radius: 10px;
+    max-width: 400px;
+    position: relative;
+}
+
+.close {
+    position: absolute;
+    right: 1rem;
+    top: 0.5rem;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+#login-form {
+    display: grid;
+    gap: 1rem;
+}
+
+.error-message {
+    color: #ff0000;
+    margin-top: 1rem;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    nav {
+        flex-direction: column;
+    }
+
+    nav ul {
+        margin-top: 1rem;
+    }
+
+    nav ul li {
+        margin-left: 1rem;
+        margin-right: 1rem;
+    }
+
+    #jumbotron {
+        padding: 2rem 5%;
+    }
+
+    #jumbotron h1 {
+        font-size: 2rem;
+    }
+
+    #hero {
+        flex-direction: column;
+        padding: 2rem 5%;
+    }
+
+    .hero-content {
+        padding-right: 0;
+        margin-bottom: 2rem;
+    }
+
+    .step {
+        flex-basis: calc(50% - 1rem);
+    }
+
+    .footer-section {
+        flex-basis: 100%;
+    }
+}
+
+/* Dashboard styles */
+.dashboard {
+    padding: 2rem 5%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.dashboard h1 {
+    color: #2c3e50;
+    margin-bottom: 2rem;
+}
+
+.project-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.project-item {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.project-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.project-item h3 {
+    color: #4CAF50;
+    margin-bottom: 0.5rem;
+}
+
+#generate-data {
+    margin-top: 3rem;
+}
+
+#generate-data form {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 2rem;
+    margin-top: 1rem;
+    display: grid;
+    gap: 1.5rem;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+#generate-data input[type="file"],
+#generate-data select,
+#generate-data input[type="number"] {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+#generate-data button[type="submit"] {
+    justify-self: start;
+}
+
+/* Responsive design for dashboard */
+@media (max-width: 768px) {
+    .project-list {
+        grid-template-columns: 1fr;
+    }
+}

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SynthetiQ Data Analysis</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/data_analysis.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">SynthetiQ</div>
+            <div class="nav-links">
+                <a href="{{ url_for('main.dashboard') }}"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                <a href="{{ url_for('auth.logout') }}" class="btn-logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container">
+        <h1>Data Analysis</h1>
+        
+        <section id="dataset-overview" class="card">
+            <h2>Dataset Overview</h2>
+            <p><strong>Total Rows:</strong> {{ analysis.total_rows }}</p>
+            <p><strong>Total Columns:</strong> {{ analysis.total_columns }}</p>
+            <div class="column-list">
+                {% for column in analysis.columns %}
+                <div class="column-item">
+                    <input type="checkbox" id="column-{{ loop.index }}" name="columns" value="{{ column }}" checked>
+                    <label for="column-{{ loop.index }}">{{ column }}</label>
+                    <button class="btn-show-more" data-column="{{ column }}">Show More</button>
+                    <div class="column-details" id="details-{{ column }}"></div>
+                </div>
+                {% endfor %}
+            </div>
+            <button id="remove-columns" class="btn btn-primary">Remove Selected Columns</button>
+        </section>
+
+        <section id="sample-data" class="card">
+            <h2>Sample Data</h2>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            {% for column in analysis.columns %}
+                            <th>{{ column }}</th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in analysis.sample_data %}
+                        <tr>
+                            {% for column in analysis.columns %}
+                            <td>{{ row[column] }}</td>
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="insights" class="card">
+            <h2>Insights & Recommendations</h2>
+            <div id="insights-content"></div>
+        </section>
+
+        <section id="data-generation" class="card">
+            <h2>Generate Synthetic Data</h2>
+            <form id="generate-form" action="{{ url_for('data.generate_data') }}" method="post">
+                <div class="form-group">
+                    <label for="project-name">Project Name:</label>
+                    <input type="text" id="project-name" name="project_name" required>
+                </div>
+                <div class="form-group">
+                    <label for="model">Model:</label>
+                    <select id="model" name="model" required>
+                        <option value="gaussian_copula">Gaussian Copula</option>
+                        <option value="ctgan">CTGAN</option>
+                        <option value="tvae">TVAE</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="samples">Number of Samples:</label>
+                    <input type="number" id="samples" name="samples" min="1" required>
+                </div>
+                <div class="form-group">
+                    <label for="output-format">Output Format:</label>
+                    <select id="output-format" name="output_format" required>
+                        <option value="csv">CSV</option>
+                        <option value="json">JSON</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <button type="button" id="toggle-advanced">Advanced Settings</button>
+                </div>
+                <div id="advanced-settings" style="display: none;">
+                    <!-- Advanced settings will be dynamically populated here -->
+                </div>
+                <button type="submit" class="btn btn-primary">Generate Synthetic Data</button>
+            </form>
+            <div id="progress-bar" style="display: none;">
+                <p>Generating data... Please wait.</p>
+                <div class="progress-bar"></div>
+            </div>
+        </section>
+
+        <button id="download-report" class="btn btn-secondary">Download Analysis Report</button>
+    </main>
+
+    <script src="{{ url_for('static', filename='js/data_analysis.js') }}"></script>
+</body>
+</html>

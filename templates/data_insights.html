@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Insights - SynthetiQ</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/data_insights.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="{{ url_for('static', filename='js/data_insights.js') }}"></script>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">
+                <a href="{{ url_for('main.index') }}">SynthetiQ</a>
+            </div>
+            <div class="nav-links">
+                <a href="{{ url_for('main.dashboard') }}" class="nav-link">
+                    <i class="fas fa-chart-line"></i>
+                    Dashboard
+                </a>
+                <a href="{{ url_for('main.support') }}" class="nav-link">
+                    <i class="fas fa-question-circle"></i>
+                    Support
+                </a>
+                <a href="{{ url_for('auth.logout') }}" class="btn-logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container">
+        <!-- Project Overview -->
+        <div class="project-header">
+            <div class="project-info">
+                <h1>{{ project.name }}</h1>
+                <div class="project-meta">
+                    <span><i class="fas fa-cube"></i> {{ project.model }}</span>
+                    <span><i class="fas fa-table"></i> {{ project.samples }} samples</span>
+                    <span><i class="fas fa-clock"></i> {{ project.created_at }}</span>
+                </div>
+            </div>
+            <div class="project-actions">
+                <a href="{{ url_for('data.download_project', project_id=project.id) }}" class="btn btn-download">
+                    <i class="fas fa-download"></i> Download Data
+                </a>
+            </div>
+        </div>
+
+        <!-- Overall Metrics Dashboard -->
+        <section class="insight-section overall-metrics">
+            <h2>Synthesis Overview</h2>
+            <div class="metrics-grid">
+                <div class="metric-card highlight">
+                    <div class="metric-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="metric-content">
+                        <h3>Statistical Fidelity</h3>
+                        <div class="metric-value">{{ "%.1f"|format(stats.overall_metrics.correlation_preservation or 0) }}%</div>
+                        <div class="metric-description">Overall statistical preservation</div>
+                    </div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="metric-content">
+                        <h3>Data Quality</h3>
+                        <div class="metric-value">{{ "%.1f"|format(stats.overall_metrics.data_quality or 0) }}%</div>
+                        <div class="metric-description">Overall data quality score</div>
+                    </div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon">
+                        <i class="fas fa-table"></i>
+                    </div>
+                    <div class="metric-content">
+                        <h3>Sample Size</h3>
+                        <div class="metric-value">{{ stats.overall_metrics.samples_generated }}</div>
+                        <div class="metric-description">Total samples generated</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Model Insights -->
+        <section class="insight-section model-insights">
+            <h2>Model Analysis</h2>
+            <div class="model-info">
+                <div class="model-type">
+                    <h3><i class="fas fa-brain"></i> Model: {{ stats.overall_metrics.model_type|title }}</h3>
+                    <p>{{ stats.overall_metrics.model_insights }}</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Column Analysis -->
+        <div class="insights-grid">
+            {% for col, col_stats in stats.column_stats.items() %}
+            <section class="insight-section column-analysis">
+                <h2>{{ col }} Analysis</h2>
+                
+                <!-- Statistical Metrics -->
+                <div class="metrics-container">
+                    <div class="metric-group">
+                        <h3>Statistical Metrics</h3>
+                        <div class="metrics-grid">
+                            <div class="metric-item">
+                                <span class="label">Mean</span>
+                                <span class="value">{{ "%.2f"|format(col_stats.mean) }}</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="label">Median</span>
+                                <span class="value">{{ "%.2f"|format(col_stats.median) }}</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="label">Std Dev</span>
+                                <span class="value">{{ "%.2f"|format(col_stats.std) }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Distribution Chart -->
+                <div class="distribution-card">
+                    <h3>Distribution Analysis</h3>
+                    <canvas id="dist-{{ col }}" 
+                           data-histogram="{{ stats.distributions[col].histogram|tojson if stats.distributions and col in stats.distributions else '[]' }}"
+                           data-bins="{{ stats.distributions[col].bins|tojson if stats.distributions and col in stats.distributions else '[]' }}"></canvas>
+                    <div class="distribution-stats">
+                        <div class="stat-item">
+                            <span class="label">Range</span>
+                            <span class="value">{{ "%.2f"|format(col_stats.min) }} - {{ "%.2f"|format(col_stats.max) }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quality Metrics -->
+                {% if stats.quality_metrics and col in stats.quality_metrics %}
+                <div class="quality-metrics">
+                    <h3>Quality Metrics</h3>
+                    <div class="metrics-grid">
+                        <div class="metric-item">
+                            <span class="label">Completeness</span>
+                            <span class="value">{{ "%.1f"|format(stats.quality_metrics[col].completeness) }}%</span>
+                        </div>
+                        <div class="metric-item">
+                            <span class="label">Consistency</span>
+                            <span class="value">{{ "%.1f"|format(stats.quality_metrics[col].consistency) }}%</span>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </section>
+            {% endfor %}
+        </div>
+
+        <!-- Correlation Analysis -->
+        {% if stats.correlations %}
+        <section class="insight-section correlations">
+            <h2>Correlation Analysis</h2>
+            <div class="correlation-insights">
+                <h3>Key Relationships</h3>
+                <ul>
+                    {% for col1, corrs in stats.correlations.items() %}
+                    {% for col2, value in corrs.items() %}
+                    {% if col1 != col2 and value is not none and value|float|abs > 0.5 %}
+                    <li>
+                        <i class="fas fa-arrow-right"></i>
+                        Strong {{ "positive" if value > 0 else "negative" }} correlation between {{ col1 }} and {{ col2 }}
+                        ({{ "%.2f"|format(value) }})
+                    </li>
+                    {% endif %}
+                    {% endfor %}
+                    {% endfor %}
+                </ul>
+            </div>
+        </section>
+        {% endif %}
+    </main>
+</body>
+</html>

@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SynthetiQ Data Overview</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/data_overview.css') }}">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">SynthetiQ</div>
+            <div class="nav-links">
+                <a href="{{ url_for('main.dashboard') }}"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                <a href="{{ url_for('auth.logout') }}" class="btn-logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container">
+        <div class="page-header">
+            <h1>Data Overview</h1>
+            <div class="dataset-summary">
+                <div class="summary-item">
+                    <i class="fas fa-table"></i>
+                    <span>{{ analysis.total_rows }} Records</span>
+                </div>
+                <div class="summary-item">
+                    <i class="fas fa-columns"></i>
+                    <span>{{ analysis.total_columns }} Columns</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid-container">
+            <!-- Column Analysis Section -->
+            <section id="column-analysis" class="card">
+                <h2>Column Analysis</h2>
+                <div class="tabs">
+                    <button class="tab-btn active" data-tab="overview">Overview</button>
+                    <button class="tab-btn" data-tab="statistics">Statistics</button>
+                    <button class="tab-btn" data-tab="distributions">Distributions</button>
+                </div>
+
+                <div class="tab-content active" id="overview">
+                    <div class="columns-grid">
+                        {% for column in analysis.columns %}
+                        <div class="column-card">
+                            <div class="column-header">
+                                <input type="checkbox" id="column-{{ loop.index }}" name="columns" value="{{ column.name }}" checked>
+                                <label for="column-{{ loop.index }}">{{ column.name }}</label>
+                            </div>
+                            <div class="column-stats">
+                                <div class="stat-row">
+                                    <span class="stat-label">Type:</span>
+                                    <span class="stat-value">{{ column.type }}</span>
+                                </div>
+                                <div class="stat-row">
+                                    <span class="stat-label">Unique Values:</span>
+                                    <span class="stat-value">{{ column.unique_values }}</span>
+                                </div>
+                                <div class="stat-row">
+                                    <span class="stat-label">Missing Values:</span>
+                                    <span class="stat-value">{{ column.missing_values }}</span>
+                                </div>
+                                {% if column.type in ['int64', 'float64'] %}
+                                <div class="stat-row">
+                                    <span class="stat-label">Range:</span>
+                                    <span class="stat-value">{{ "%.2f"|format(column.min) }} - {{ "%.2f"|format(column.max) }}</span>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="tab-content" id="statistics">
+                    <div class="table-wrapper">
+                        <table class="stats-table">
+                            <thead>
+                                <tr>
+                                    <th>Column</th>
+                                    <th>Type</th>
+                                    <th>Mean</th>
+                                    <th>Std</th>
+                                    <th>Min</th>
+                                    <th>Max</th>
+                                    <th>Unique</th>
+                                    <th>Missing</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for column in analysis.columns %}
+                                <tr>
+                                    <td>{{ column.name }}</td>
+                                    <td>{{ column.type }}</td>
+                                    <td>{{ "%.2f"|format(column.mean) if column.type in ['int64', 'float64'] else '-' }}</td>
+                                    <td>{{ "%.2f"|format(column.std) if column.type in ['int64', 'float64'] else '-' }}</td>
+                                    <td>{{ "%.2f"|format(column.min) if column.type in ['int64', 'float64'] else '-' }}</td>
+                                    <td>{{ "%.2f"|format(column.max) if column.type in ['int64', 'float64'] else '-' }}</td>
+                                    <td>{{ column.unique_values }}</td>
+                                    <td>{{ column.missing_values }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="distributions">
+                    <div class="charts-grid">
+                        {% for column in analysis.columns %}
+                        {% if column.type in ['int64', 'float64'] %}
+                        <div class="chart-container">
+                            <canvas id="dist-{{ column.name }}"></canvas>
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </section>
+
+            <!-- Model Selection Section -->
+            <section id="model-selection" class="card">
+                <h2>Model Selection</h2>
+                <div class="model-cards">
+                    <div class="model-card" data-model="gaussian_copula">
+                        <div class="model-header">
+                            <input type="radio" id="gaussian_copula" name="model" value="gaussian_copula" checked>
+                            <label for="gaussian_copula">Gaussian Copula</label>
+                        </div>
+                        <div class="model-description">
+                            <p>Best for general-purpose tabular data</p>
+                            <ul>
+                                <li>Preserves statistical relationships</li>
+                                <li>Handles mixed data types</li>
+                                <li>Fast training and generation</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="model-card" data-model="ctgan">
+                        <div class="model-header">
+                            <input type="radio" id="ctgan" name="model" value="ctgan">
+                            <label for="ctgan">CTGAN</label>
+                        </div>
+                        <div class="model-description">
+                            <p>Ideal for imbalanced categorical data</p>
+                            <ul>
+                                <li>Handles class imbalance</li>
+                                <li>Preserves categorical relationships</li>
+                                <li>Advanced deep learning architecture</li>
+                            </ul>
+                        </div>
+                        <div class="model-params">
+                            <h4>Parameters</h4>
+                            <div class="param-group">
+                                <label for="ctgan-epochs">Training Epochs:</label>
+                                <input type="number" id="ctgan-epochs" value="300" min="1">
+                            </div>
+                            <div class="param-group">
+                                <label for="ctgan-batch">Batch Size:</label>
+                                <input type="number" id="ctgan-batch" value="500" min="1">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="model-card" data-model="tvae">
+                        <div class="model-header">
+                            <input type="radio" id="tvae" name="model" value="tvae">
+                            <label for="tvae">TVAE</label>
+                        </div>
+                        <div class="model-description">
+                            <p>Suitable for time-series data</p>
+                            <ul>
+                                <li>Handles temporal dependencies</li>
+                                <li>Good for large datasets</li>
+                                <li>Efficient encoding-decoding</li>
+                            </ul>
+                        </div>
+                        <div class="model-params">
+                            <h4>Parameters</h4>
+                            <div class="param-group">
+                                <label for="tvae-epochs">Training Epochs:</label>
+                                <input type="number" id="tvae-epochs" value="300" min="1">
+                            </div>
+                            <div class="param-group">
+                                <label for="tvae-batch">Batch Size:</label>
+                                <input type="number" id="tvae-batch" value="500" min="1">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Generation Settings Section -->
+            <section id="generation-settings" class="card">
+                <h2>Generation Settings</h2>
+                <form id="generate-form" action="{{ url_for('data.generate_data') }}" method="post">
+                    <input type="hidden" id="selected-columns" name="selected_columns">
+                    <input type="hidden" id="selected-model" name="model">
+                    <input type="hidden" id="model-params" name="model_params">
+                    
+                    <div class="settings-grid">
+                        <div class="setting-group">
+                            <label for="project-name">Project Name</label>
+                            <input type="text" id="project-name" name="project_name" required 
+                                   value="{{ project_name }}"
+                                   placeholder="Enter a name for your synthetic data project">
+                        </div>
+                        
+                        <div class="setting-group">
+                            <label for="samples">Number of Samples</label>
+                            <div class="sample-input">
+                                <input type="number" id="samples" name="samples" value="1000" min="1" required>
+                                <div class="sample-presets">
+                                    <button type="button" class="preset-btn" data-value="1000">1K</button>
+                                    <button type="button" class="preset-btn" data-value="10000">10K</button>
+                                    <button type="button" class="preset-btn" data-value="100000">100K</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" onclick="previewSettings()">
+                            <i class="fas fa-eye"></i> Preview Settings
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-magic"></i> Generate Synthetic Data
+                        </button>
+                    </div>
+                </form>
+            </section>
+        </div>
+
+        <!-- Preview Modal -->
+        <div id="preview-modal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>Generation Settings Preview</h2>
+                <div id="preview-content"></div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js"></script>
+    <script src="{{ url_for('static', filename='js/data_overview.js') }}"></script>
+</body>
+</html>

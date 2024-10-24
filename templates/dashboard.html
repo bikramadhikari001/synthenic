@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SynthetiQ Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">
+                <a href="{{ url_for('main.index') }}">SynthetiQ</a>
+            </div>
+            <div class="nav-links">
+                <a href="{{ url_for('main.support') }}" class="nav-link">
+                    <i class="fas fa-question-circle"></i>
+                    Support
+                </a>
+                <a href="{{ url_for('auth.logout') }}" class="btn-logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container">
+        <div class="welcome-section">
+            <div class="user-info">
+                <div class="avatar">{{ user.name[0] }}</div>
+                <h1>Welcome, {{ user.name }}!</h1>
+            </div>
+        </div>
+
+        <div class="stats-section">
+            <div class="stat-card">
+                <i class="fas fa-folder"></i>
+                <div class="stat-info">
+                    <h3>Total Projects</h3>
+                    <p>{{ total_projects }}</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-table"></i>
+                <div class="stat-info">
+                    <h3>Total Samples</h3>
+                    <p>{{ total_samples }}</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-cube"></i>
+                <div class="stat-info">
+                    <h3>Most Used Model</h3>
+                    <p>{{ most_used_model }}</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-chart-line"></i>
+                <div class="stat-info">
+                    <h3>Success Rate</h3>
+                    <p>{{ success_rate }}%</p>
+                </div>
+            </div>
+        </div>
+
+        <section class="projects-section">
+            <div class="section-header">
+                <h2>Your Projects</h2>
+                <div class="filters">
+                    <input type="search" placeholder="Search projects...">
+                    <select class="model-select">
+                        <option>All Models</option>
+                        <option>gaussian_copula</option>
+                        <option>ctgan</option>
+                        <option>tvae</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="projects-grid">
+                {% for project in projects %}
+                <div class="project-card">
+                    <div class="project-header">
+                        <div class="project-icon">{{ project.name[0] }}</div>
+                        <div class="project-info">
+                            <h3 class="project-name">{{ project.name }}</h3>
+                            <p class="project-model">{{ project.model }}</p>
+                        </div>
+                    </div>
+                    <div class="project-details">
+                        <p><i class="fas fa-table"></i> {{ project.samples }} samples</p>
+                        <p><i class="fas fa-file"></i> {{ project.format }}</p>
+                        <p><i class="fas fa-clock"></i> {{ project.created_at }}</p>
+                    </div>
+                    <div class="project-actions">
+                        <a href="{{ url_for('data.download_project', project_id=project.id) }}" class="btn btn-download">
+                            <i class="fas fa-download"></i> Download
+                        </a>
+                        <a href="{{ url_for('data.data_insights', project_id=project.id) }}" class="btn btn-view">
+                            <i class="fas fa-eye"></i> View
+                        </a>
+                        <button class="btn btn-delete delete-btn" data-project-id="{{ project.id }}">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <section class="upload-section">
+            <h2>Upload New CSV</h2>
+            <div class="upload-zone">
+                <i class="fas fa-cloud-upload-alt"></i>
+                <p>Drag and drop your CSV file here, or click to select a file</p>
+            </div>
+            <button class="btn btn-primary upload-btn">Upload and Analyze</button>
+        </section>
+    </main>
+
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+</body>
+</html>

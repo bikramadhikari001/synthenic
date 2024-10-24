@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Synthetic Data Generator</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <div class="container">
+    <h1>Synthetic Data Generator</h1>
+    <form id="data-form">
+      <label for="file">Upload CSV File:</label>
+      <input type="file" id="file" required><br><br>
+
+      <label for="model">Select Model:</label>
+      <select id="model" required>
+        <option value="gaussian_copula">Gaussian Copula</option>
+        <option value="ctgan">CTGAN</option>
+        <option value="tvae">TVAE</option>
+      </select><br><br>
+
+      <label for="samples">Number of Samples:</label>
+      <input type="number" id="samples" value="1000" required><br><br>
+
+      <label for="format">Select Output Format:</label>
+      <select id="format" required>
+        <option value="csv">CSV</option>
+        <option value="json">JSON</option>
+      </select><br><br>
+
+      <button type="button" onclick="generateData()">Generate</button>
+    </form>
+    <div id="message"></div>
+    <div id="download-link" style="display: none;">
+      <a id="downloadBtn" href="" download>Download Data</a>
+    </div>
+  </div>
+
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
