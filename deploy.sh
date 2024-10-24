@@ -28,16 +28,15 @@ ssh -i $PEM_FILE ubuntu@$SERVER_IP << EOF
     else
         # Repository exists - Pull latest changes
         cd ~/synthenic
-        git pull origin main
+        git fetch origin
+        git reset --hard origin/main
     fi
 
     # Navigate to project directory
     cd ~/synthenic
 
-    # Stop and remove existing containers
+    # Stop and remove existing containers and networks
     sudo docker-compose down
-
-    # Remove old images to ensure we get the latest version
     sudo docker system prune -f
 
     # Build and start containers with sudo for port 80
@@ -46,6 +45,10 @@ ssh -i $PEM_FILE ubuntu@$SERVER_IP << EOF
 
     # Show container status
     sudo docker ps
+
+    # Check if the application is accessible
+    echo "Checking if the application is accessible..."
+    curl -I http://localhost:80
 EOF
 
 echo "Deployment completed!"
