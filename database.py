@@ -1,16 +1,30 @@
-import sqlite3
-import os
+import sqlitecloud
 from datetime import datetime
 
-def get_db_connection(db_path='database.db'):
-    # Create the database file with proper permissions
-    if not os.path.exists(db_path):
-        open(db_path, 'a').close()
-        os.chmod(db_path, 0o666)
+def get_db_connection(db_path=None):
+    # SQLite Cloud connection string
+    connection_string = "sqlitecloud://nujaxhhmhk.sqlite.cloud:8860?apikey=qoGc7qTB8j3ojaVCn1MPCxilBfXwpSpFuj1Tl59AoyM"
     
-    db = sqlite3.connect(db_path)
-    db.row_factory = sqlite3.Row
-    return db
+    try:
+        db = sqlitecloud.connect(connection_string)
+        cursor = db.cursor()
+        
+        # Create database if it doesn't exist
+        try:
+            cursor.execute("CREATE DATABASE synthenic")
+        except Exception as e:
+            print(f"Note: {e}")
+            
+        # Use the database
+        cursor.execute("USE DATABASE synthenic")
+        
+        db.row_factory = lambda cursor, row: {
+            column[0]: row[idx] for idx, column in enumerate(cursor.description)
+        }
+        return db
+    except Exception as e:
+        print(f"Error connecting to SQLite Cloud: {e}")
+        raise
 
 def init_db(db):
     cursor = db.cursor()
@@ -49,7 +63,7 @@ def migrate_db(db):
     # Example migration: Add a new column to projects table
     try:
         cursor.execute('ALTER TABLE projects ADD COLUMN file_path TEXT')
-    except sqlite3.OperationalError:
+    except Exception:
         # Column already exists
         pass
     
@@ -64,7 +78,7 @@ def add_user(db, user_id, name, email):
         )
         db.commit()
         return True
-    except sqlite3.Error as e:
+    except Exception as e:
         print(f"Error adding user: {e}")
         return False
 
@@ -73,7 +87,7 @@ def get_user(db, user_id):
     try:
         cursor.execute('SELECT * FROM users WHERE id = ?', (user_id,))
         return cursor.fetchone()
-    except sqlite3.Error as e:
+    except Exception as e:
         print(f"Error getting user: {e}")
         return None
 
@@ -86,7 +100,7 @@ def add_project(db, user_id, name, model, samples, format, file_path):
         ''', (user_id, name, model, samples, format, file_path))
         db.commit()
         return cursor.lastrowid
-    except sqlite3.Error as e:
+    except Exception as e:
         print(f"Error adding project: {e}")
         return None
 
@@ -95,7 +109,7 @@ def get_project(db, project_id):
     try:
         cursor.execute('SELECT * FROM projects WHERE id = ?', (project_id,))
         return cursor.fetchone()
-    except sqlite3.Error as e:
+    except Exception as e:
         print(f"Error getting project: {e}")
         return None
 
@@ -118,18 +132,9 @@ def get_project_details(db, project_id):
         ''', (project_id,))
         project = cursor.fetchone()
         if project:
-            return {
-                'id': project['id'],
-                'name': project['name'],
-                'model': project['model'],
-                'samples': project['samples'],
-                'format': project['format'],
-                'file_path': project['file_path'],
-                'created_at': project['created_at'],
-                'user_name': project['user_name']
-            }
+            return project
         return None
-    except sqlite3.Error as e:
+    except Exception as e:
         print(f"Error getting project details: {e}")
         return None
 
@@ -138,7 +143,7 @@ def get_user_projects(db, user_id):
     try:
         cursor.execute('SELECT * FROM projects WHERE user_id = ? ORDER BY created_at DESC', (user_id,))
         return cursor.fetchall()
-    except sqlite3.Error as e:
+    except Exception as e:
         print(f"Error getting user projects: {e}")
         return []
 
@@ -148,7 +153,7 @@ def delete_project(db, project_id):
         cursor.execute('DELETE FROM projects WHERE id = ?', (project_id,))
         db.commit()
         return True
-    except sqlite3.Error as e:
+    except Exception as e:
         print(f"Error deleting project: {e}")
         return False
 
@@ -157,11 +162,13 @@ def get_user_stats(db, user_id):
     try:
         # Get total projects
         cursor.execute('SELECT COUNT(*) as count FROM projects WHERE user_id = ?', (user_id,))
-        total_projects = cursor.fetchone()['count']
+        result = cursor.fetchone()
+        total_projects = result['count'] if result else 0
 
         # Get total samples
         cursor.execute('SELECT SUM(samples) as total FROM projects WHERE user_id = ?', (user_id,))
-        total_samples = cursor.fetchone()['total'] or 0
+        result = cursor.fetchone()
+        total_samples = result['total'] if result and result['total'] is not None else 0
 
         # Get most used model
         cursor.execute('''
@@ -181,7 +188,7 @@ def get_user_stats(db, user_id):
             'most_used_model': most_used_model,
             'success_rate': 100  # Placeholder for now
         }
-    except sqlite3.Error as e:
+    except Exception as e:
         print(f"Error getting user stats: {e}")
         return {
             'total_projects': 0,
