@@ -12,10 +12,31 @@ chmod 400 $PEM_FILE
 
 # SSH into server and deploy
 echo "Connecting to server and deploying..."
-ssh -i $PEM_FILE ubuntu@$SERVER_IP << EOF
+ssh -i $PEM_FILE ubuntu@$SERVER_IP << 'EOF'
     # Update system packages
     sudo apt-get update
-    sudo apt-get install -y docker.io docker-compose git
+    sudo apt-get install -y docker.io docker-compose git nginx
+
+    # Configure nginx
+    sudo tee /etc/nginx/sites-available/synthenic << 'EON'
+server {
+    listen 80;
+    server_name _;
+
+    location / {
+        proxy_pass http://localhost:5000;
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto \$scheme;
+    }
+}
+EON
+
+    # Enable nginx site
+    sudo ln -sf /etc/nginx/sites-available/synthenic /etc/nginx/sites-enabled/
+    sudo rm -f /etc/nginx/sites-enabled/default
+    sudo systemctl restart nginx
 
     # Start Docker service
     sudo systemctl start docker
@@ -39,7 +60,7 @@ ssh -i $PEM_FILE ubuntu@$SERVER_IP << EOF
     sudo docker-compose down
     sudo docker system prune -f
 
-    # Build and start containers with sudo for port 80
+    # Build and start containers
     sudo docker-compose build --no-cache
     sudo docker-compose up -d
 
@@ -48,6 +69,7 @@ ssh -i $PEM_FILE ubuntu@$SERVER_IP << EOF
 
     # Check if the application is accessible
     echo "Checking if the application is accessible..."
+    sleep 5  # Wait for the application to start
     curl -I http://localhost:80
 EOF
 
