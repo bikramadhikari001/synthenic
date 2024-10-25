@@ -3,6 +3,9 @@ version: '3.8'
 services:
   web:
     build: .
+    container_name: synthenic_web_1
+    networks:
+      - synthenic_network
     ports:
       - "5000:5000"
     volumes:
@@ -11,3 +14,7 @@ services:
       - FLASK_APP=app.py
       - FLASK_ENV=development
     command: flask run --host=0.0.0.0
+
+networks:
+  synthenic_network:
+    name: synthenic_network

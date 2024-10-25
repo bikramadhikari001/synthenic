@@ -24,11 +24,11 @@ server {
     server_name _;
 
     location / {
-        proxy_pass http://localhost:5000;
-        proxy_set_header Host \$host;
-        proxy_set_header X-Real-IP \$remote_addr;
-        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto \$scheme;
+        proxy_pass http://synthenic_web_1:5000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
     }
 }
 EON
@@ -56,13 +56,19 @@ EON
     # Navigate to project directory
     cd ~/synthenic
 
+    # Create Docker network if it doesn't exist
+    sudo docker network create synthenic_network || true
+
     # Stop and remove existing containers and networks
     sudo docker-compose down
     sudo docker system prune -f
 
-    # Build and start containers
+    # Build and start containers with custom network
     sudo docker-compose build --no-cache
     sudo docker-compose up -d
+
+    # Connect nginx to the Docker network
+    sudo docker network connect synthenic_network $(sudo docker ps -qf "name=nginx")
 
     # Show container status
     sudo docker ps
