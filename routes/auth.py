@@ -52,7 +52,7 @@ def callback():
 def logout():
     session.clear()
     params = {
-        'returnTo': 'http://127.0.0.1:8080',
+        'returnTo': 'https://syntheti.org',
         'client_id': AUTH0_CLIENT_ID
     }
     return redirect(f'https://{AUTH0_DOMAIN}/v2/logout?{urlencode(params)}')
