@@ -1,4 +1,5 @@
 from flask import Flask, g
+from werkzeug.middleware.proxy_fix import ProxyFix
 from routes.main import main
 from routes.auth import auth
 from routes.data import data
@@ -10,11 +11,19 @@ import secrets
 def create_app():
     app = Flask(__name__)
 
+    # Configure ProxyFix for HTTPS behind nginx
+    app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
+
     # Use a fixed secret key or load from environment variable
     app.secret_key = os.environ.get('FLASK_SECRET_KEY', 'your-fixed-secret-key-here')
 
     # Load config
     app.config.from_object('config')
+
+    # Force HTTPS for session cookie
+    app.config['SESSION_COOKIE_SECURE'] = True
+    app.config['SESSION_COOKIE_HTTPONLY'] = True
+    app.config['PREFERRED_URL_SCHEME'] = 'https'
 
     # Initialize OAuth with app
     oauth.init_app(app)
