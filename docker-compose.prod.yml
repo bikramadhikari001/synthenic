@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  web:
+    build:
+      context: .
+      args:
+        - GITHUB_REPO=https://github.com/bikramadhikari001/synthenic.git
+        - GITHUB_BRANCH=main
+    volumes: []  # Remove local volume mount in production
+    environment:
+      - FLASK_ENV=production
+    restart: always
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1G
+        reservations:
+          cpus: '0.5'
+          memory: 512M

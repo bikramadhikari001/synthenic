@@ -10,8 +10,8 @@ import secrets
 def create_app():
     app = Flask(__name__)
 
-    # Set a secret key for session management
-    app.secret_key = secrets.token_hex(32)
+    # Use a fixed secret key or load from environment variable
+    app.secret_key = os.environ.get('FLASK_SECRET_KEY', 'your-fixed-secret-key-here')
 
     # Load config
     app.config.from_object('config')
