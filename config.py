@@ -5,7 +5,7 @@ from authlib.integrations.flask_client import OAuth
 AUTH0_CLIENT_ID = 'YOqctT8i6HJhkbMKz7rjN3qlFs3HJkgG'
 AUTH0_CLIENT_SECRET = 'F3Y5Ij6oH3Xn-bz_NJaMBIFmIDf5Djwovzn8tbT_Mpum6ywlKYhxEuGXGiXAv_eo'
 AUTH0_DOMAIN = 'dev-5bknupzhbwplp5fc.us.auth0.com'
-AUTH0_CALLBACK_URL = 'http://127.0.0.1:8080/callback'
+AUTH0_CALLBACK_URL = 'https://syntheti.org/callback'
 
 # Initialize OAuth
 oauth = OAuth()
